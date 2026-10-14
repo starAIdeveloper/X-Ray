@@ -1,2 +1,172 @@
-import * as THREE from 'three';import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-export function createViewer(host,meshData,options,onMeasure){let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true})}catch{host.innerHTML='<p class="notice">WebGL unavailable. Slice analysis and mesh exports remain available.</p>';return {dispose(){},update(){},png(){return null}}}renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0x05111b);renderer.localClippingEnabled=true;host.append(renderer.domElement);const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(42,1,.01,10000),size=options.size;camera.up.set(0,0,1);camera.position.set(size*1.5,-size*2,size*.85);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;scene.add(new THREE.AmbientLight(0xc3dcff,1.6));for(const [x,y,z]of [[1,-1,2],[-1,.2,1]]){const light=new THREE.DirectionalLight(0xffffff,2.8);light.position.set(x*size,y*size,z*size);scene.add(light)}const grid=new THREE.GridHelper(size*2,24,0x235075,0x122c42);grid.rotation.x=Math.PI/2;grid.position.z=-size/2;scene.add(grid);scene.add(new THREE.AxesHelper(size*.3));const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(meshData.positions,3));geometry.setAttribute('normal',new THREE.BufferAttribute(meshData.normals,3));const material=new THREE.MeshStandardMaterial({color:0xd3d7d9,roughness:.65,metalness:.08,side:THREE.DoubleSide});const mesh=new THREE.Mesh(geometry,material);scene.add(mesh);const pointMaterial=new THREE.PointsMaterial({color:0x28a8ff,size:size/180,sizeAttenuation:true});const points=new THREE.Points(geometry,pointMaterial);scene.add(points);const raycaster=new THREE.Raycaster(),marks=[],markObjects=[];let down;const pointerdown=e=>{down=[e.clientX,e.clientY]},pointerup=e=>{if(!options.measure||!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>5)return;const r=renderer.domElement.getBoundingClientRect();raycaster.setFromCamera(new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),camera);const hit=raycaster.intersectObject(mesh)[0];if(!hit)return;if(marks.length===2){marks.length=0;for(const o of markObjects){scene.remove(o);o.geometry.dispose();o.material.dispose()}markObjects.length=0}marks.push(hit.point.clone());const marker=new THREE.Mesh(new THREE.SphereGeometry(size/130,10,10),new THREE.MeshBasicMaterial({color:0x32e8cb}));marker.position.copy(hit.point);scene.add(marker);markObjects.push(marker);if(marks.length===2){const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(marks),new THREE.LineBasicMaterial({color:0x32e8cb,depthTest:false}));scene.add(line);markObjects.push(line);onMeasure(marks[0].distanceTo(marks[1]))}};renderer.domElement.addEventListener('pointerdown',pointerdown);renderer.domElement.addEventListener('pointerup',pointerup);const resize=()=>{const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()};const observer=new ResizeObserver(resize);observer.observe(host);resize();function update(next){Object.assign(options,next);mesh.visible=options.mode!=='points';points.visible=options.mode==='points';material.wireframe=options.mode==='wireframe';const clipping=options.section?[new THREE.Plane(new THREE.Vector3(0,0,-1),options.cut*size/2)]:[];material.clippingPlanes=clipping;pointMaterial.clippingPlanes=clipping}update(options);renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});return {update,png:()=>renderer.domElement.toDataURL('image/png'),reset(){camera.position.set(size*1.5,-size*2,size*.85);controls.target.set(0,0,0);controls.update()},dispose(){observer.disconnect();renderer.setAnimationLoop(null);controls.dispose();renderer.domElement.removeEventListener('pointerdown',pointerdown);renderer.domElement.removeEventListener('pointerup',pointerup);scene.traverse(o=>{if(o.geometry&&o.geometry!==geometry)o.geometry.dispose();if(o.material)o.material.dispose()});geometry.dispose();renderer.dispose();renderer.domElement.remove()}};}
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+export function createViewer(host, meshData, options, onMeasure) {
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      preserveDrawingBuffer: true,
+    });
+  } catch {
+    host.innerHTML =
+      '<p class="notice">WebGL unavailable. Slice analysis and mesh exports remain available.</p>';
+    return {
+      dispose() {},
+      update() {},
+      png() {
+        return null;
+      },
+    };
+  }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x05111b);
+  renderer.localClippingEnabled = true;
+  host.append(renderer.domElement);
+  const scene = new THREE.Scene(),
+    camera = new THREE.PerspectiveCamera(42, 1, 0.01, 10000),
+    size = options.size;
+  camera.up.set(0, 0, 1);
+  camera.position.set(size * 1.5, -size * 2, size * 0.85);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  scene.add(new THREE.AmbientLight(0xc3dcff, 1.6));
+  for (const [x, y, z] of [
+    [1, -1, 2],
+    [-1, 0.2, 1],
+  ]) {
+    const light = new THREE.DirectionalLight(0xffffff, 2.8);
+    light.position.set(x * size, y * size, z * size);
+    scene.add(light);
+  }
+  const grid = new THREE.GridHelper(size * 2, 24, 0x235075, 0x122c42);
+  grid.rotation.x = Math.PI / 2;
+  grid.position.z = -size / 2;
+  scene.add(grid);
+  scene.add(new THREE.AxesHelper(size * 0.3));
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(meshData.positions, 3),
+  );
+  geometry.setAttribute(
+    "normal",
+    new THREE.BufferAttribute(meshData.normals, 3),
+  );
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xd3d7d9,
+    roughness: 0.65,
+    metalness: 0.08,
+    side: THREE.DoubleSide,
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+  const pointMaterial = new THREE.PointsMaterial({
+    color: 0x28a8ff,
+    size: size / 180,
+    sizeAttenuation: true,
+  });
+  const points = new THREE.Points(geometry, pointMaterial);
+  scene.add(points);
+  const raycaster = new THREE.Raycaster(),
+    marks = [],
+    markObjects = [];
+  let down;
+  const pointerdown = (e) => {
+      down = [e.clientX, e.clientY];
+    },
+    pointerup = (e) => {
+      if (
+        !options.measure ||
+        !down ||
+        Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5
+      )
+        return;
+      const r = renderer.domElement.getBoundingClientRect();
+      raycaster.setFromCamera(
+        new THREE.Vector2(
+          ((e.clientX - r.left) / r.width) * 2 - 1,
+          (-(e.clientY - r.top) / r.height) * 2 + 1,
+        ),
+        camera,
+      );
+      const hit = raycaster.intersectObject(mesh)[0];
+      if (!hit) return;
+      if (marks.length === 2) {
+        marks.length = 0;
+        for (const o of markObjects) {
+          scene.remove(o);
+          o.geometry.dispose();
+          o.material.dispose();
+        }
+        markObjects.length = 0;
+      }
+      marks.push(hit.point.clone());
+      const marker = new THREE.Mesh(
+        new THREE.SphereGeometry(size / 130, 10, 10),
+        new THREE.MeshBasicMaterial({ color: 0x32e8cb }),
+      );
+      marker.position.copy(hit.point);
+      scene.add(marker);
+      markObjects.push(marker);
+      if (marks.length === 2) {
+        const line = new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints(marks),
+          new THREE.LineBasicMaterial({ color: 0x32e8cb, depthTest: false }),
+        );
+        scene.add(line);
+        markObjects.push(line);
+        onMeasure(marks[0].distanceTo(marks[1]));
+      }
+    };
+  renderer.domElement.addEventListener("pointerdown", pointerdown);
+  renderer.domElement.addEventListener("pointerup", pointerup);
+  const resize = () => {
+    const w = host.clientWidth,
+      h = host.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  };
+  const observer = new ResizeObserver(resize);
+  observer.observe(host);
+  resize();
+  function update(next) {
+    Object.assign(options, next);
+    mesh.visible = options.mode !== "points";
+    points.visible = options.mode === "points";
+    material.wireframe = options.mode === "wireframe";
+    const clipping = options.section
+      ? [new THREE.Plane(new THREE.Vector3(0, 0, -1), (options.cut * size) / 2)]
+      : [];
+    material.clippingPlanes = clipping;
+    pointMaterial.clippingPlanes = clipping;
+  }
+  update(options);
+  renderer.setAnimationLoop(() => {
+    controls.update();
+    renderer.render(scene, camera);
+  });
+  return {
+    update,
+    png: () => renderer.domElement.toDataURL("image/png"),
+    reset() {
+      camera.position.set(size * 1.5, -size * 2, size * 0.85);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    },
+    dispose() {
+      observer.disconnect();
+      renderer.setAnimationLoop(null);
+      controls.dispose();
+      renderer.domElement.removeEventListener("pointerdown", pointerdown);
+      renderer.domElement.removeEventListener("pointerup", pointerup);
+      scene.traverse((o) => {
+        if (o.geometry && o.geometry !== geometry) o.geometry.dispose();
+        if (o.material) o.material.dispose();
+      });
+      geometry.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
+    },
+  };
+}

@@ -1,2 +1,38 @@
-import {phantom,project,reconstruct} from './volume.js';
-self.onmessage=e=>{try{const {kind,n,views,count}=e.data,start=performance.now();let input=views;if(kind==='phantom'){const original=phantom(n);input=project(original,n,Array.from({length:count},(_,i)=>i*180/count),p=>self.postMessage({progress:p*.35,phase:'Generating synthetic projections'}))}const volume=reconstruct(input,n,p=>self.postMessage({progress:.35+p*.65,phase:'Filtered backprojection'}));self.postMessage({done:true,volume,views:input,seconds:(performance.now()-start)/1000},[volume.buffer])}catch(err){self.postMessage({error:err.message})}};
+import { phantom, project, reconstruct } from "./volume.js";
+self.onmessage = (e) => {
+  try {
+    const { kind, n, views, count } = e.data,
+      start = performance.now();
+    let input = views;
+    if (kind === "phantom") {
+      const original = phantom(n);
+      input = project(
+        original,
+        n,
+        Array.from({ length: count }, (_, i) => (i * 180) / count),
+        (p) =>
+          self.postMessage({
+            progress: p * 0.35,
+            phase: "Generating synthetic projections",
+          }),
+      );
+    }
+    const volume = reconstruct(input, n, (p) =>
+      self.postMessage({
+        progress: 0.35 + p * 0.65,
+        phase: "Filtered backprojection",
+      }),
+    );
+    self.postMessage(
+      {
+        done: true,
+        volume,
+        views: input,
+        seconds: (performance.now() - start) / 1000,
+      },
+      [volume.buffer],
+    );
+  } catch (err) {
+    self.postMessage({ error: err.message });
+  }
+};
