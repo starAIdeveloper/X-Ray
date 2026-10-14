@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "checks": [
+    "production build navigation",
+    "WebGL mesh/points/wireframe",
+    "section plane",
+    "raycast measurement",
+    "voxel calibration",
+    "threshold",
+    "slice plane/index",
+    "worker reconstruction",
+    "STL OBJ exports",
+    "volume backup",
+    "reports/CSV",
+    "metadata persistence",
+    "built reference assets",
+    "restore/rejection",
+    "multi-image import",
+    "angle validation",
+    "imported reconstruction",
+    "job cancellation",
+    "mobile layout"
+  ],
+  "pageErrors": []
+}
