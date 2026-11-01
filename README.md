@@ -4,6 +4,32 @@ A working browser reconstruction workbench inspired by the five supplied desktop
 
 ![Running reconstruction dashboard](docs/screenshots/dashboard.webp)
 
+## Design reference gallery
+
+The five supplied interface designs are shown below. Screenshots of the implemented app are in [Running application screenshots](#running-application-screenshots).
+
+### Reconstruction report
+
+![Reconstruction report design with projection comparisons, dimensional analysis, deviation heatmaps and study history](docs/reference/screen-1.webp)
+
+### 3D reconstruction workspace
+
+![Reconstruction workspace design with volume slices, mesh and point-cloud views, parameters and convergence charts](docs/reference/screen-2.webp)
+
+### Segmentation and calibration
+
+![Segmentation design with bone contours, image-processing controls, calibration markers and feature matching](docs/reference/screen-3.webp)
+
+### X-ray projection import
+
+![Projection import design with image thumbnails, an import queue, dataset management and acquisition metadata](docs/reference/screen-4.webp)
+
+### Reconstruction dashboard
+
+![Dashboard design with projection previews, a 3D model, cross-sections and reconstruction quality charts](docs/reference/screen-5.webp)
+
+These user-provided visual targets are stored as WebP copies. Their anatomy, numerical quality scores, CUDA/OpenCV labels and clinical-looking results are illustrative reference content, not outputs from this implementation.
+
 ## Run
 
 Node.js 22+ and npm:
@@ -64,16 +90,6 @@ These show the implemented app with synthetic/test data, captured by the browser
 ### Mobile layout
 
 ![Responsive mobile reconstruction workspace](docs/screenshots/mobile.webp)
-
-## Supplied design reference images
-
-These are the user-provided visual targets, converted to WebP. Their anatomy, numerical quality scores, CUDA/OpenCV labels and clinical-looking results are illustrative reference content, not outputs from this implementation.
-
-![Report design reference](docs/reference/screen-1.webp)
-![Reconstruction design reference](docs/reference/screen-2.webp)
-![Segmentation design reference](docs/reference/screen-3.webp)
-![Import design reference](docs/reference/screen-4.webp)
-![Dashboard design reference](docs/reference/screen-5.webp)
 
 ## Tests
 
