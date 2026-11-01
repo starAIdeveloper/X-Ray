@@ -2,13 +2,11 @@
 
 A working browser reconstruction workbench inspired by the five supplied desktop reference images. Built with Three.js, Vite, Canvas and a CPU Web Worker. It includes real parallel-beam filtered backprojection, a synthetic bone-like phantom, projection import, segmentation, 3D inspection, measurements, and exports.
 
+![Reconstruction report design with projection comparisons, dimensional analysis, deviation heatmaps and study history](docs/reference/screen-1.webp)
+
 ## Design reference gallery
 
 The five supplied interface designs are shown below. Screenshots of the implemented app are in [Running application screenshots](#running-application-screenshots).
-
-### Reconstruction report
-
-![Reconstruction report design with projection comparisons, dimensional analysis, deviation heatmaps and study history](docs/reference/screen-1.webp)
 
 ### 3D reconstruction workspace
 
