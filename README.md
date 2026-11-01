@@ -2,8 +2,6 @@
 
 A working browser reconstruction workbench inspired by the five supplied desktop reference images. Built with Three.js, Vite, Canvas and a CPU Web Worker. It includes real parallel-beam filtered backprojection, a synthetic bone-like phantom, projection import, segmentation, 3D inspection, measurements, and exports.
 
-![Running reconstruction dashboard](docs/screenshots/dashboard.webp)
-
 ## Design reference gallery
 
 The five supplied interface designs are shown below. Screenshots of the implemented app are in [Running application screenshots](#running-application-screenshots).
@@ -66,30 +64,6 @@ The synthetic sample uses overlapping ellipsoidal shells to suggest long bones a
 Projection columns are detector positions. The top image row maps to the highest world Z; the bottom image row maps to the first axial slice (index 0). Angles rotate around Z and must be unique in [0°,180°). All views must share the same detector geometry and centered rotation axis. Imported intensities are treated as nonnegative line-integral values after grayscale conversion to [0,1]. Raw transmission images generally require acquisition-specific corrections and logarithmic conversion before import. This application does not perform those corrections or read acquisition metadata.
 
 Raster inputs are 8-bit browser-decoded PNG/JPEG/WebP, up to 10 MB and 24 megapixels each. They are resampled to a square grid, so detector aspect ratio and axial scale must already be compatible. DICOM, TIFF, cone-beam geometry, CT Hounsfield calibration, automatic landmarks and clinical bone recognition are not implemented. Sparse/incompatible views can produce severe artifacts. No accuracy or clinical utility is claimed for imported images.
-
-## Running application screenshots
-
-These show the implemented app with synthetic/test data, captured by the browser checks.
-
-### Reconstruction
-
-![Working 3D reconstruction and parameter controls](docs/screenshots/reconstruction.webp)
-
-### Projection import
-
-![Projection import and editable acquisition angles](docs/screenshots/import.webp)
-
-### Segmentation
-
-![Threshold segmentation and slice processing](docs/screenshots/segmentation.webp)
-
-### Reports
-
-![Computed dimensional report and export actions](docs/screenshots/reports.webp)
-
-### Mobile layout
-
-![Responsive mobile reconstruction workspace](docs/screenshots/mobile.webp)
 
 ## Tests
 
